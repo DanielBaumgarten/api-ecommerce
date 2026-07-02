@@ -1,0 +1,35 @@
+{
+  "name": "api-ecommerce",
+  "version": "1.0.0",
+  "description": "Trabalho FInal -  Desenvolvimento de Serviços e API's",
+  "main": "index.js",
+  "scripts": {
+  "start": "node src/server.js",
+  "dev": "nodemon src/server.js"
+}
+,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanielBaumgarten/api-ecommerce.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DanielBaumgarten/api-ecommerce/issues"
+  },
+  "homepage": "https://github.com/DanielBaumgarten/api-ecommerce#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.22.0",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
