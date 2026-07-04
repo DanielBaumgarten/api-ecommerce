@@ -4,10 +4,9 @@
   "description": "Trabalho FInal -  Desenvolvimento de Serviços e API's",
   "main": "index.js",
   "scripts": {
-  "start": "node src/server.js",
-  "dev": "nodemon src/server.js"
-}
-,
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DanielBaumgarten/api-ecommerce.git"
