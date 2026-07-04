@@ -138,6 +138,72 @@ async function criar(dados) {
   return pedido.rows[0];
 }
 
+async function listar() {
+  const result = await pool.query(`
+    SELECT
+      p.id,
+      p.cliente_id,
+      c.nome AS cliente,
+      p.data_hora,
+      p.status,
+      p.forma_pagamento,
+      p.valor_total
+    FROM pedidos p
+    JOIN clientes c
+      ON p.cliente_id = c.id
+    ORDER BY p.id
+  `);
+
+  return result.rows;
+}
+
+async function buscarPorId(id) {
+  const pedido = await pool.query(
+    `
+    SELECT
+      p.id,
+      p.cliente_id,
+      c.nome AS cliente,
+      p.data_hora,
+      p.status,
+      p.forma_pagamento,
+      p.valor_total
+    FROM pedidos p
+    JOIN clientes c
+      ON p.cliente_id = c.id
+    WHERE p.id = $1
+    `,
+    [id]
+  );
+
+  if (pedido.rows.length === 0) {
+    return null;
+  }
+
+  const itens = await pool.query(
+    `
+    SELECT
+      ip.produto_id,
+      pr.nome AS produto,
+      ip.quantidade,
+      ip.valor_unitario
+    FROM itens_pedido ip
+    JOIN produtos pr
+      ON ip.produto_id = pr.id
+    WHERE ip.pedido_id = $1
+    `,
+    [id]
+  );
+
+  return {
+    ...pedido.rows[0],
+    itens: itens.rows
+  };
+}
+
 module.exports = {
-  criar
+  criar,  
+listar,
+buscarPorId
+
 };

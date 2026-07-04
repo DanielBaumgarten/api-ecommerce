@@ -14,6 +14,28 @@ async function criar(req, res) {
   }
 }
 
+async function listar(req, res) {
+  const pedidos =
+    await pedidoService.listar();
+
+  res.status(200).json(pedidos);
+}
+
+async function buscarPorId(req, res) {
+  const { id } = req.params;
+  const pedido =
+    await pedidoService.buscarPorId(id);
+
+  if (!pedido) {
+    return res.status(404).json({
+      mensagem: "Pedido não encontrado"
+    });
+  }
+  res.status(200).json(pedido);
+}
+
 module.exports = {
-  criar
+  criar,
+  listar,
+  buscarPorId
 };
