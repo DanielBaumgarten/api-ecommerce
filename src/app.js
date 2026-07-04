@@ -8,6 +8,7 @@ const produtoRoutes = require("./routes/produtoRoutes");
 const pedidoRoutes = require("./routes/pedidoRoutes");
 const compraRoutes = require("./routes/compraRoutes");
 const marcaRoutes = require("./routes/marcaRoutes");
+const fornecedorRoutes = require("./routes/fornecedorRoutes");
 
 
 
@@ -25,6 +26,8 @@ app.use("/marcas", marcaRoutes);
 app.use("/pedidos", pedidoRoutes);
 app.use("/compras", compraRoutes);
 app.use("/auth", authRoutes);
+app.use("/fornecedores",fornecedorRoutes);
+
 
 
 app.get("/perfil", authMiddleware, (req, res) => {
