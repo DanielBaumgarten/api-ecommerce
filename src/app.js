@@ -7,6 +7,8 @@ const clienteRoutes = require("./routes/clienteRoutes");
 const produtoRoutes = require("./routes/produtoRoutes");
 const pedidoRoutes = require("./routes/pedidoRoutes");
 const compraRoutes = require("./routes/compraRoutes");
+const marcaRoutes = require("./routes/marcaRoutes");
+
 
 
 const authMiddleware = require("./middlewares/authMiddleware");
@@ -15,12 +17,15 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use("/auth", authRoutes);
+
 app.use("/categorias", categoriaRoutes);
 app.use("/clientes", clienteRoutes);
-app.use("/compras", compraRoutes);
 app.use("/produtos", produtoRoutes);
+app.use("/marcas", marcaRoutes);
 app.use("/pedidos", pedidoRoutes);
+app.use("/compras", compraRoutes);
+app.use("/auth", authRoutes);
+
 
 app.get("/perfil", authMiddleware, (req, res) => {
   res.json(req.usuario);
