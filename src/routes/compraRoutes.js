@@ -14,4 +14,16 @@ router.post(
   compraController.criar
 );
 
+router.get(
+  "/",
+  authMiddleware,
+  compraController.listar
+);
+
+router.get(
+  "/:id",
+  authMiddleware,
+  compraController.buscarPorId
+);
+
 module.exports = router;
