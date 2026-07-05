@@ -1,87 +1,143 @@
 const fornecedorService = require("../services/fornecedorService");
 
-async function listar(req, res) {
-  const fornecedores =
-    await fornecedorService.listar();
+async function listar(
+  req,
+  res,
+  next
+) {
+  try {
+    const fornecedores =
+      await fornecedorService.listar();
 
-  res.status(200).json(fornecedores);
-}
+    res.status(200).json(fornecedores);
 
-async function buscarPorId(req, res) {
-  const { id } = req.params;
-
-  const fornecedor =
-    await fornecedorService.buscarPorId(id);
-
-  if (!fornecedor) {
-    return res.status(404).json({
-      mensagem: "Fornecedor não encontrado"
-    });
+  } catch (error) {
+    next(error);
   }
-
-  res.status(200).json(fornecedor);
 }
 
-async function criar(req, res) {
-  const {
-    empresa,
-    cnpj,
-    telefone,
-    email
-  } = req.body;
+async function buscarPorId(
+  req,
+  res,
+  next
+) {
+  try {
+    const { id } = req.params;
 
-  if (!empresa || !cnpj) {
-    return res.status(400).json({
-      mensagem:
+    const fornecedor =
+      await fornecedorService.buscarPorId(id);
+
+    if (!fornecedor) {
+      const error = new Error(
+        "Fornecedor não encontrado"
+      );
+
+      error.status = 404;
+
+      throw error;
+    }
+
+    res.status(200).json(fornecedor);
+
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function criar(
+  req,
+  res,
+  next
+) {
+  try {
+    const {
+      empresa,
+      cnpj,
+      telefone,
+      email
+    } = req.body;
+
+    if (!empresa || !cnpj) {
+      const error = new Error(
         "Empresa e CNPJ são obrigatórios"
-    });
-  }
+      );
 
-  const fornecedor =
-    await fornecedorService.criar(
+      error.status = 400;
+
+      throw error;
+    }
+
+    const fornecedor =
+      await fornecedorService.criar(
+        empresa,
+        cnpj,
+        telefone,
+        email
+      );
+
+    res.status(201).json(fornecedor);
+
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function atualizar(
+  req,
+  res,
+  next
+) {
+  try {
+    const { id } = req.params;
+
+    const {
       empresa,
       cnpj,
       telefone,
       email
-    );
+    } = req.body;
 
-  res.status(201).json(fornecedor);
-}
+    const fornecedor =
+      await fornecedorService.atualizar(
+        id,
+        empresa,
+        cnpj,
+        telefone,
+        email
+      );
 
-async function atualizar(req, res) {
-  const { id } = req.params;
+    if (!fornecedor) {
+      const error = new Error(
+        "Fornecedor não encontrado"
+      );
 
-  const {
-    empresa,
-    cnpj,
-    telefone,
-    email
-  } = req.body;
+      error.status = 404;
 
-  const fornecedor =
-    await fornecedorService.atualizar(
-      id,
-      empresa,
-      cnpj,
-      telefone,
-      email
-    );
+      throw error;
+    }
 
-  if (!fornecedor) {
-    return res.status(404).json({
-      mensagem: "Fornecedor não encontrado"
-    });
+    res.status(200).json(fornecedor);
+
+  } catch (error) {
+    next(error);
   }
-
-  res.status(200).json(fornecedor);
 }
 
-async function excluir(req, res) {
-  const { id } = req.params;
+async function excluir(
+  req,
+  res,
+  next
+) {
+  try {
+    const { id } = req.params;
 
-  await fornecedorService.excluir(id);
+    await fornecedorService.excluir(id);
 
-  res.status(204).send();
+    res.status(204).send();
+
+  } catch (error) {
+    next(error);
+  }
 }
 
 module.exports = {
