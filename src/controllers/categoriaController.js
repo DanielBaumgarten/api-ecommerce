@@ -1,67 +1,135 @@
 const categoriaService = require("../services/categoriaService");
 
-async function listar(req, res) {
-  const categorias = await categoriaService.listar();
+async function listar(
+  req,
+  res,
+  next
+) {
+  try {
+    const categorias =
+      await categoriaService.listar();
 
-  res.status(200).json(categorias);
-}
+    res.status(200).json(categorias);
 
-async function buscarPorId(req, res) {
-  const { id } = req.params;
-
-  const categoria = await categoriaService.buscarPorId(id);
-
-  if (!categoria) {
-    return res.status(404).json({
-      mensagem: "Categoria não encontrada"
-    });
+  } catch (error) {
+    next(error);
   }
-
-  res.status(200).json(categoria);
 }
 
-async function criar(req, res) {
-  const { nome, descricao } = req.body;
+async function buscarPorId(
+  req,
+  res,
+  next
+) {
+  try {
+    const { id } = req.params;
 
-  if (!nome) {
-    return res.status(400).json({
-      mensagem: "Nome é obrigatório"
-    });
+    const categoria =
+      await categoriaService.buscarPorId(id);
+
+    if (!categoria) {
+      const error = new Error(
+        "Categoria não encontrada"
+      );
+
+      error.status = 404;
+
+      throw error;
+    }
+
+    res.status(200).json(categoria);
+
+  } catch (error) {
+    next(error);
   }
-
-  const categoria = await categoriaService.criar(
-    nome,
-    descricao
-  );
-
-  res.status(201).json(categoria);
 }
 
-async function atualizar(req, res) {
-  const { id } = req.params;
-  const { nome, descricao } = req.body;
+async function criar(
+  req,
+  res,
+  next
+) {
+  try {
+    const {
+      nome,
+      descricao
+    } = req.body;
 
-  if (!nome) {
-    return res.status(400).json({
-      mensagem: "Nome é obrigatório"
-    });
+    if (!nome) {
+      const error = new Error(
+        "Nome é obrigatório"
+      );
+
+      error.status = 400;
+
+      throw error;
+    }
+
+    const categoria =
+      await categoriaService.criar(
+        nome,
+        descricao
+      );
+
+    res.status(201).json(categoria);
+
+  } catch (error) {
+    next(error);
   }
-
-  const categoria = await categoriaService.atualizar(
-    id,
-    nome,
-    descricao
-  );
-
-  res.status(200).json(categoria);
 }
 
-async function excluir(req, res) {
-  const { id } = req.params;
+async function atualizar(
+  req,
+  res,
+  next
+) {
+  try {
+    const { id } = req.params;
 
-  await categoriaService.excluir(id);
+    const {
+      nome,
+      descricao
+    } = req.body;
 
-  res.status(204).send();
+    if (!nome) {
+      const error = new Error(
+        "Nome é obrigatório"
+      );
+
+      error.status = 400;
+
+      throw error;
+    }
+
+    const categoria =
+      await categoriaService.atualizar(
+        id,
+        nome,
+        descricao
+      );
+
+    res.status(200).json(categoria);
+
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function excluir(
+  req,
+  res,
+  next
+) {
+  try {
+    const { id } = req.params;
+
+    await categoriaService.excluir(id);
+
+    res.status(204).send();
+
+  } catch (error) {
+    next(error);
+  }
 }
 
 module.exports = {
