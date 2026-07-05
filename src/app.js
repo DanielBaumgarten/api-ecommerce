@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./docs/swagger");
+const errorHandler = require("./middlewares/errorHandler");
+
 
 const authRoutes = require("./routes/authRoutes");
 const categoriaRoutes = require("./routes/categoriaRoutes");
@@ -11,9 +13,6 @@ const pedidoRoutes = require("./routes/pedidoRoutes");
 const compraRoutes = require("./routes/compraRoutes");
 const marcaRoutes = require("./routes/marcaRoutes");
 const fornecedorRoutes = require("./routes/fornecedorRoutes");
-
-
-
 const authMiddleware = require("./middlewares/authMiddleware");
 
 const app = express();
@@ -30,8 +29,7 @@ app.use("/pedidos", pedidoRoutes);
 app.use("/compras", compraRoutes);
 app.use("/auth", authRoutes);
 app.use("/fornecedores",fornecedorRoutes);
-
-
+app.use(errorHandler);
 
 app.get("/perfil", authMiddleware, (req, res) => {
   res.json(req.usuario);
@@ -42,5 +40,7 @@ app.get("/", (req, res) => {
     mensagem: "API Ecommerce funcionando"
   });
 });
+
+
 
 module.exports = app;
