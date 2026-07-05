@@ -1,7 +1,9 @@
 const express = require("express");
+
 const router = express.Router();
 
-const categoriaController = require("../controllers/categoriaController");
+const categoriaController =
+  require("../controllers/categoriaController");
 
 /**
  * @swagger
@@ -15,8 +17,11 @@ const categoriaController = require("../controllers/categoriaController");
  *       200:
  *         description: Lista de categorias
  */
+router.get(
+  "/",
+  categoriaController.listar
+);
 
-router.get("/", categoriaController.listar);
 /**
  * @swagger
  * /categorias/{id}:
@@ -37,7 +42,10 @@ router.get("/", categoriaController.listar);
  *       404:
  *         description: Categoria não encontrada
  */
-router.get("/:id", categoriaController.buscarPorId);
+router.get(
+  "/:id",
+  categoriaController.buscarPorId
+);
 
 /**
  * @swagger
@@ -58,13 +66,18 @@ router.get("/:id", categoriaController.buscarPorId);
  *             properties:
  *               nome:
  *                 type: string
+ *                 example: Eletrônicos
  *               descricao:
  *                 type: string
+ *                 example: Produtos eletrônicos e tecnologia
  *     responses:
  *       201:
  *         description: Categoria criada
  */
-router.post("/", categoriaController.criar);
+router.post(
+  "/",
+  categoriaController.criar
+);
 
 /**
  * @swagger
@@ -82,11 +95,29 @@ router.post("/", categoriaController.criar);
  *           type: integer
  *     requestBody:
  *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - nome
+ *             properties:
+ *               nome:
+ *                 type: string
+ *                 example: Informática
+ *               descricao:
+ *                 type: string
+ *                 example: Computadores, notebooks e acessórios
  *     responses:
  *       200:
  *         description: Categoria atualizada
+ *       404:
+ *         description: Categoria não encontrada
  */
-router.put("/:id", categoriaController.atualizar);
+router.put(
+  "/:id",
+  categoriaController.atualizar
+);
 
 /**
  * @swagger
@@ -105,7 +136,12 @@ router.put("/:id", categoriaController.atualizar);
  *     responses:
  *       204:
  *         description: Categoria removida
+ *       404:
+ *         description: Categoria não encontrada
  */
-router.delete("/:id", categoriaController.excluir);
+router.delete(
+  "/:id",
+  categoriaController.excluir
+);
 
 module.exports = router;

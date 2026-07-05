@@ -1,87 +1,106 @@
-const fornecedorService = require("../services/fornecedorService");
+const pool = require("../db/connection");
 
-async function listar(req, res) {
-  const fornecedores =
-    await fornecedorService.listar();
-
-  res.status(200).json(fornecedores);
-}
-
-async function buscarPorId(req, res) {
-  const { id } = req.params;
-
-  const fornecedor =
-    await fornecedorService.buscarPorId(id);
-
-  if (!fornecedor) {
-    return res.status(404).json({
-      mensagem: "Fornecedor não encontrado"
-    });
-  }
-
-  res.status(200).json(fornecedor);
-}
-
-async function criar(req, res) {
-  const {
-    empresa,
-    cnpj,
-    telefone,
-    email
-  } = req.body;
-
-  if (!empresa || !cnpj) {
-    return res.status(400).json({
-      mensagem:
-        "Empresa e CNPJ são obrigatórios"
-    });
-  }
-
-  const fornecedor =
-    await fornecedorService.criar(
-      empresa,
-      cnpj,
-      telefone,
-      email
-    );
-
-  res.status(201).json(fornecedor);
-}
-
-async function atualizar(req, res) {
-  const { id } = req.params;
-
-  const {
-    empresa,
-    cnpj,
-    telefone,
-    email
-  } = req.body;
-
-  const fornecedor =
-    await fornecedorService.atualizar(
+async function listar() {
+  const result = await pool.query(`
+    SELECT
       id,
       empresa,
       cnpj,
       telefone,
       email
-    );
+    FROM fornecedores
+    ORDER BY id
+  `);
 
-  if (!fornecedor) {
-    return res.status(404).json({
-      mensagem: "Fornecedor não encontrado"
-    });
-  }
-
-  res.status(200).json(fornecedor);
+  return result.rows;
 }
 
-async function excluir(req, res) {
-  const { id } = req.params;
+async function buscarPorId(id) {
+  const result = await pool.query(
+    `
+    SELECT
+      id,
+      empresa,
+      cnpj,
+      telefone,
+      email
+    FROM fornecedores
+    WHERE id = $1
+    `,
+    [id]
+  );
 
-  await fornecedorService.excluir(id);
+  return result.rows[0];
+}
 
-  res.status(204).send();
+async function criar(
+  empresa,
+  cnpj,
+  telefone,
+  email
+) {
+  const result = await pool.query(
+    `
+    INSERT INTO fornecedores
+    (
+      empresa,
+      cnpj,
+      telefone,
+      email
+    )
+    VALUES
+    ($1, $2, $3, $4)
+    RETURNING *
+    `,
+    [
+      empresa,
+      cnpj,
+      telefone,
+      email
+    ]
+  );
+
+  return result.rows[0];
+}
+
+async function atualizar(
+  id,
+  empresa,
+  cnpj,
+  telefone,
+  email
+) {
+  const result = await pool.query(
+    `
+    UPDATE fornecedores
+    SET
+      empresa = $1,
+      cnpj = $2,
+      telefone = $3,
+      email = $4
+    WHERE id = $5
+    RETURNING *
+    `,
+    [
+      empresa,
+      cnpj,
+      telefone,
+      email,
+      id
+    ]
+  );
+
+  return result.rows[0];
+}
+
+async function excluir(id) {
+  await pool.query(
+    `
+    DELETE FROM fornecedores
+    WHERE id = $1
+    `,
+    [id]
+  );
 }
 
 module.exports = {
