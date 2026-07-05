@@ -1,37 +1,67 @@
-const pedidoService =
-  require("../services/pedidoService");
+const pedidoService = require("../services/pedidoService");
 
-async function criar(req, res) {
+async function criar(
+  req,
+  res,
+  next
+) {
   try {
     const pedido =
-      await pedidoService.criar(req.body);
+      await pedidoService.criar(
+        req.body
+      );
 
     res.status(201).json(pedido);
+
   } catch (error) {
-    res.status(400).json({
-      mensagem: error.message
-    });
+    next(error);
   }
 }
 
-async function listar(req, res) {
-  const pedidos =
-    await pedidoService.listar();
+async function listar(
+  req,
+  res,
+  next
+) {
+  try {
+    const pedidos =
+      await pedidoService.listar();
 
-  res.status(200).json(pedidos);
+    res.status(200).json(pedidos);
+
+  } catch (error) {
+    next(error);
+  }
 }
 
-async function buscarPorId(req, res) {
-  const { id } = req.params;
-  const pedido =
-    await pedidoService.buscarPorId(id);
+async function buscarPorId(
+  req,
+  res,
+  next
+) {
+  try {
+    const { id } = req.params;
 
-  if (!pedido) {
-    return res.status(404).json({
-      mensagem: "Pedido não encontrado"
-    });
+    const pedido =
+      await pedidoService.buscarPorId(
+        id
+      );
+
+    if (!pedido) {
+      const error = new Error(
+        "Pedido não encontrado"
+      );
+
+      error.status = 404;
+
+      throw error;
+    }
+
+    res.status(200).json(pedido);
+
+  } catch (error) {
+    next(error);
   }
-  res.status(200).json(pedido);
 }
 
 module.exports = {
