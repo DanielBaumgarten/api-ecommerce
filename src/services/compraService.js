@@ -17,9 +17,13 @@ async function criar(dados) {
     );
 
   if (fornecedor.rows.length === 0) {
-    throw new Error(
+    const error = new Error(
       "Fornecedor não encontrado"
     );
+
+    error.status = 404;
+
+    throw error;
   }
 
   const compra =
@@ -44,7 +48,6 @@ async function criar(dados) {
     compra.rows[0].id;
 
   for (const item of itens) {
-
     const produto =
       await pool.query(
         `
@@ -58,9 +61,13 @@ async function criar(dados) {
     if (
       produto.rows.length === 0
     ) {
-      throw new Error(
+      const error = new Error(
         `Produto ${item.produto_id} não encontrado`
       );
+
+      error.status = 404;
+
+      throw error;
     }
 
     await pool.query(
