@@ -1,12 +1,7 @@
 const express = require("express");
-
 const router = express.Router();
-
-const marcaController =
-  require("../controllers/marcaController");
-
-const authMiddleware =
-  require("../middlewares/authMiddleware");
+const marcaController = require("../controllers/marcaController");
+const authMiddleware = require("../middlewares/authMiddleware");
 
 /**
  * @swagger
