@@ -7,8 +7,6 @@ async function criar(dados) {
     itens
   } = dados;
 
-  // Validar cliente
-
   const cliente = await pool.query(
     `
     SELECT *
@@ -19,17 +17,18 @@ async function criar(dados) {
   );
 
   if (cliente.rows.length === 0) {
-    throw new Error(
+    const error = new Error(
       "Cliente não encontrado"
     );
+
+    error.status = 404;
+
+    throw error;
   }
 
   let valorTotal = 0;
 
-  // Validar produtos e estoque
-
   for (const item of itens) {
-
     const produto = await pool.query(
       `
       SELECT *
@@ -40,9 +39,13 @@ async function criar(dados) {
     );
 
     if (produto.rows.length === 0) {
-      throw new Error(
+      const error = new Error(
         `Produto ${item.produto_id} não encontrado`
       );
+
+      error.status = 404;
+
+      throw error;
     }
 
     const produtoAtual =
@@ -52,17 +55,19 @@ async function criar(dados) {
       produtoAtual.estoque <
       item.quantidade
     ) {
-      throw new Error(
+      const error = new Error(
         `Estoque insuficiente para ${produtoAtual.nome}`
       );
+
+      error.status = 400;
+
+      throw error;
     }
 
     valorTotal +=
       Number(produtoAtual.preco) *
       item.quantidade;
   }
-
-  // Criar pedido
 
   const pedido = await pool.query(
     `
@@ -84,12 +89,10 @@ async function criar(dados) {
     ]
   );
 
-  const pedidoId = pedido.rows[0].id;
-
-  // Criar itens e atualizar estoque
+  const pedidoId =
+    pedido.rows[0].id;
 
   for (const item of itens) {
-
     const produto = await pool.query(
       `
       SELECT *
@@ -202,8 +205,7 @@ async function buscarPorId(id) {
 }
 
 module.exports = {
-  criar,  
-listar,
-buscarPorId
-
+  criar,
+  listar,
+  buscarPorId
 };
