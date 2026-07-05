@@ -1,67 +1,129 @@
-const marcaService =
-  require("../services/marcaService");
+const marcaService = require("../services/marcaService");
 
-async function listar(req, res) {
-  const marcas =
-    await marcaService.listar();
+async function listar(
+  req,
+  res,
+  next
+) {
+  try {
+    const marcas =
+      await marcaService.listar();
 
-  res.status(200).json(marcas);
-}
+    res.status(200).json(marcas);
 
-async function buscarPorId(req, res) {
-  const { id } = req.params;
-
-  const marca =
-    await marcaService.buscarPorId(id);
-
-  if (!marca) {
-    return res.status(404).json({
-      mensagem: "Marca não encontrada"
-    });
+  } catch (error) {
+    next(error);
   }
-
-  res.status(200).json(marca);
 }
 
-async function criar(req, res) {
-  const { nome, url_logo } = req.body;
+async function buscarPorId(
+  req,
+  res,
+  next
+) {
+  try {
+    const { id } = req.params;
 
-  if (!nome) {
-    return res.status(400).json({
-      mensagem: "Nome é obrigatório"
-    });
+    const marca =
+      await marcaService.buscarPorId(id);
+
+    if (!marca) {
+      const error = new Error(
+        "Marca não encontrada"
+      );
+
+      error.status = 404;
+
+      throw error;
+    }
+
+    res.status(200).json(marca);
+
+  } catch (error) {
+    next(error);
   }
-
-  const marca =
-    await marcaService.criar(
-      nome,
-      url_logo
-    );
-
-  res.status(201).json(marca);
 }
 
-async function atualizar(req, res) {
-  const { id } = req.params;
+async function criar(
+  req,
+  res,
+  next
+) {
+  try {
+    const { nome, url_logo } = req.body;
 
-  const { nome, url_logo } = req.body;
+    if (!nome) {
+      const error = new Error(
+        "Nome é obrigatório"
+      );
 
-  const marca =
-    await marcaService.atualizar(
-      id,
-      nome,
-      url_logo
-    );
+      error.status = 400;
 
-  res.status(200).json(marca);
+      throw error;
+    }
+
+    const marca =
+      await marcaService.criar(
+        nome,
+        url_logo
+      );
+
+    res.status(201).json(marca);
+
+  } catch (error) {
+    next(error);
+  }
 }
 
-async function excluir(req, res) {
-  const { id } = req.params;
+async function atualizar(
+  req,
+  res,
+  next
+) {
+  try {
+    const { id } = req.params;
 
-  await marcaService.excluir(id);
+    const { nome, url_logo } = req.body;
 
-  res.status(204).send();
+    const marca =
+      await marcaService.atualizar(
+        id,
+        nome,
+        url_logo
+      );
+
+    if (!marca) {
+      const error = new Error(
+        "Marca não encontrada"
+      );
+
+      error.status = 404;
+
+      throw error;
+    }
+
+    res.status(200).json(marca);
+
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function excluir(
+  req,
+  res,
+  next
+) {
+  try {
+    const { id } = req.params;
+
+    await marcaService.excluir(id);
+
+    res.status(204).send();
+
+  } catch (error) {
+    next(error);
+  }
 }
 
 module.exports = {
