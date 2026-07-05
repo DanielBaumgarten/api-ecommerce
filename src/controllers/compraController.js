@@ -1,42 +1,71 @@
 const compraService = require("../services/compraService");
 
-async function criar(req, res) {
+async function criar(
+  req,
+  res,
+  next
+) {
   try {
     const compra =
-      await compraService.criar(req.body);
+      await compraService.criar(
+        req.body
+      );
 
     res.status(201).json(compra);
+
   } catch (error) {
-    res.status(400).json({
-      mensagem: error.message
-    });
+    next(error);
   }
 }
 
-async function listar(req, res) {
-  const compras =
-    await compraService.listar();
+async function listar(
+  req,
+  res,
+  next
+) {
+  try {
+    const compras =
+      await compraService.listar();
 
-  res.status(200).json(compras);
+    res.status(200).json(compras);
+
+  } catch (error) {
+    next(error);
+  }
 }
 
-async function buscarPorId(req, res) {
-  const { id } = req.params;
+async function buscarPorId(
+  req,
+  res,
+  next
+) {
+  try {
+    const { id } = req.params;
 
-  const compra =
-    await compraService.buscarPorId(id);
+    const compra =
+      await compraService.buscarPorId(
+        id
+      );
 
-  if (!compra) {
-    return res.status(404).json({
-      mensagem: "Compra não encontrada"
-    });
+    if (!compra) {
+      const error = new Error(
+        "Compra não encontrada"
+      );
+
+      error.status = 404;
+
+      throw error;
+    }
+
+    res.status(200).json(compra);
+
+  } catch (error) {
+    next(error);
   }
-
-  res.status(200).json(compra);
 }
 
 module.exports = {
-criar,  
-listar,
-buscarPorId
+  criar,
+  listar,
+  buscarPorId
 };
